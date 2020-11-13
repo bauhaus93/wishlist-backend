@@ -15,7 +15,7 @@ pub enum Error {
     },
 }
 
-impl Into<ErrorMessage> for Error {
+impl Into<ErrorMessage> for &Error {
     fn into(self) -> ErrorMessage {
         match self {
             Error::Persistence { source, .. } => source.into(),

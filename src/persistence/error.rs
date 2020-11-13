@@ -32,10 +32,20 @@ pub enum Error {
     DatabaseURLNotSet,
 }
 
-impl Into<ErrorMessage> for Error {
+impl Into<ErrorMessage> for &Error {
     fn into(self) -> ErrorMessage {
-        let code = 500;
-        let message = "Internal server error";
+        let code;
+        let message;
+        match self {
+            Error::EmptyResult => {
+                code = 204;
+                message = "No Content";
+            }
+            _ => {
+                code = 500;
+                message = "Internal Error";
+            }
+        }
         ErrorMessage {
             code: code,
             message: message.to_string(),

@@ -1,14 +1,11 @@
 use std;
-use std::convert::Infallible;
 use std::sync::Arc;
 use warp;
-use warp::http::StatusCode;
 use warp::Filter;
 
-use super::Error as ApplicationError;
 use super::Result;
 use crate::controller::{SimpleWishlistController, WishlistController};
-use crate::model::ErrorMessage;
+use crate::reject::handle_rejection;
 
 macro_rules! reply_future {
     ($controller:ident, $method:ident) => {{
@@ -37,38 +34,7 @@ pub async fn create_routes() -> Result<impl warp::Filter<Extract = impl warp::Re
 
     let routes = route_get_last_wishlist
         .with(log_filter)
-        .recover(handel_rejection);
+        .recover(handle_rejection);
 
     Ok(routes)
-}
-
-async fn handel_rejection(
-    rej: warp::Rejection,
-) -> std::result::Result<impl warp::Reply, Infallible> {
-    let code;
-    let message;
-    if rej.is_not_found() {
-        code = StatusCode::NOT_FOUND;
-        message = "Page not found".to_string();
-    } else if let Some(err) = rej.find::<ApplicationError>() {
-        match err {
-            ApplicationError::Controller { .. } => {
-                code = StatusCode::INTERNAL_SERVER_ERROR;
-                message = "Internal error".to_string();
-                error!("{}", err);
-            }
-        }
-    } else if let Some(err) = rej.find::<warp::filters::body::BodyDeserializeError>() {
-        info!("{}", err);
-        code = StatusCode::BAD_REQUEST;
-        message = "Bad request: Could not deserialize JSON".to_string();
-    } else {
-        code = StatusCode::INTERNAL_SERVER_ERROR;
-        message = "Unhandeled internal error".to_string();
-    }
-    let json = warp::reply::json(&ErrorMessage {
-        code: code.as_u16(),
-        message: message.into(),
-    });
-    Ok(warp::reply::with_status(json, code))
 }

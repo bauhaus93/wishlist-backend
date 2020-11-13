@@ -9,6 +9,7 @@ mod controller;
 mod error;
 mod model;
 mod persistence;
+mod reject;
 mod routes;
 mod service;
 

@@ -1,3 +1,3 @@
 #!/bin/sh
 
-RUST_LOG="app=debug,wishlist=debug" cargo run --release --bin app
+RUST_LOG="api=debug,app=debug,wishlist=debug" cargo run --release --bin app

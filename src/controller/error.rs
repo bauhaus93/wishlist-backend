@@ -17,3 +17,11 @@ pub enum Error {
 }
 
 impl warp::reject::Reject for Error {}
+
+impl Into<ErrorMessage> for &Error {
+    fn into(self) -> ErrorMessage {
+        match self {
+            Error::Service { source, .. } => source.into(),
+        }
+    }
+}
