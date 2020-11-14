@@ -11,22 +11,22 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Error, Debug)]
 pub enum Error {
-    #[error("mongodb: {source}")]
+    #[error("MongoDB: {source}")]
     MongoDB {
         #[from]
         source: MongoError,
     },
-    #[error("bson: {source}")]
+    #[error("BSON: {source}")]
     Bson {
         #[from]
         source: BsonError,
     },
-    #[error("valueaccess: {source}")]
+    #[error("ValueAccess: {source}")]
     ValueAccess {
         #[from]
         source: ValueAccessError,
     },
-    #[error("Got an empty result")]
+    #[error("Received an empty result")]
     EmptyResult,
     #[error("Can't connect to database: Environment variable 'DATABASE_URL' not set!")]
     DatabaseURLNotSet,
@@ -38,8 +38,8 @@ impl Into<ErrorMessage> for &Error {
         let message;
         match self {
             Error::EmptyResult => {
-                code = 204;
-                message = "No Content";
+                code = 200;
+                message = "Empty Result";
             }
             _ => {
                 code = 500;

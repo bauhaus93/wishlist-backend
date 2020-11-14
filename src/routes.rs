@@ -33,8 +33,8 @@ pub async fn create_routes() -> Result<impl warp::Filter<Extract = impl warp::Re
         .and_then(reply_future!(WishlistController, get_last_wishlist));
 
     let routes = route_get_last_wishlist
-        .with(log_filter)
-        .recover(handle_rejection);
+        .recover(handle_rejection)
+        .with(log_filter);
 
     Ok(routes)
 }

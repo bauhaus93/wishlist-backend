@@ -1,22 +1,20 @@
-use bson::document::{Document, ValueAccessError};
+use bson::document::Document;
 use serde::Serialize;
-use std::convert::TryFrom;
 
 #[derive(Serialize)]
 pub struct Source {
     #[serde(skip)]
-    pub id: String,
-    pub name: String,
-    pub url: String,
+    pub id: Option<String>,
+    pub name: Option<String>,
+    pub url: Option<String>,
 }
 
-impl TryFrom<&Document> for Source {
-    type Error = ValueAccessError;
-    fn try_from(doc: &Document) -> Result<Self, Self::Error> {
-        Ok(Self {
-            id: doc.get_object_id("_id").map(|e| e.to_hex())?,
-            name: doc.get_str("name").map(String::from)?,
-            url: doc.get_str("url").map(String::from)?,
-        })
+impl From<&Document> for Source {
+    fn from(doc: &Document) -> Self {
+        Self {
+            id: doc.get_object_id("_id").map(|e| e.to_hex()).ok(),
+            name: doc.get_str("name").map(String::from).ok(),
+            url: doc.get_str("url").map(String::from).ok(),
+        }
     }
 }

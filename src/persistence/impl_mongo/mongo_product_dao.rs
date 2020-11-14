@@ -13,7 +13,7 @@ pub struct MongoProductDao {
 }
 
 impl MongoProductDao {
-    pub async fn new() -> Result<Self> {
+    pub fn new() -> Result<Self> {
         Ok(Self {
             client: get_mongo_client()?,
         })
@@ -23,7 +23,22 @@ impl MongoProductDao {
 impl ProductDao for MongoProductDao {
     fn get_products_by_id(&self, product_ids: &[String]) -> Result<Vec<Product>> {
         let coll = self.client.database("wishlist").collection("product");
-        Ok(Vec::new())
+        let query = doc! {
+            "_id": {"$in": product_ids}
+        };
+        let options = FindOptions::builder()
+            .sort(doc! {"timestamp": -1})
+            .projection(doc! {"_id": false, "item_id": false})
+            .build();
+        coll.find(None /*Some(query)*/, Some(options))
+            .map_err(Error::from)
+            .map(|cursor| {
+                cursor
+                    .into_iter()
+                    .take_while(|r| r.is_ok())
+                    .map(|e| Product::from(&e.unwrap()))
+                    .collect()
+            })
     }
 
     fn get_archived_products(&self, page: usize, per_page: usize) -> Result<Vec<Product>> {

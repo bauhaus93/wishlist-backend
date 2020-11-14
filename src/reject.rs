@@ -9,7 +9,7 @@ pub async fn handle_rejection(rej: warp::Rejection) -> Result<impl warp::Reply, 
     if rej.is_not_found() {
         msg = get_not_found_message();
     } else if let Some(err) = rej.find::<ControllerError>() {
-        warn!("ControllerError: {}", err);
+        warn!("{}", err);
         msg = err.into();
     } else if let Some(err) = rej.find::<warp::filters::body::BodyDeserializeError>() {
         info!("BodyDeserializeError: {}", err);
@@ -39,7 +39,7 @@ fn get_bad_request_message() -> ErrorMessage {
     }
 }
 
-fn get_internal_error_message() -> ErrorMessage {
+pub fn get_internal_error_message() -> ErrorMessage {
     ErrorMessage {
         code: 500,
         message: "Internal server error".to_string(),

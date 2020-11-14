@@ -3,7 +3,6 @@ use mongodb::{
     options::FindOptions,
     sync::Client,
 };
-use std::convert::TryFrom;
 
 use super::get_mongo_client;
 use crate::model::Source;
@@ -26,7 +25,6 @@ impl SourceDao for MongoSourceDao {
 
         coll.find_one(Some(doc! {"_id": ObjectId::with_string(id)?}), None)
             .map_err(Error::from)
-            .and_then(|r| r.ok_or(Error::EmptyResult))
-            .and_then(|s| Source::try_from(&s).map_err(Error::from))
+            .and_then(|r| r.ok_or(Error::EmptyResult).map(|r| Source::from(&r)))
     }
 }
