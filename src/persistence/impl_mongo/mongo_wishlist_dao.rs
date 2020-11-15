@@ -5,12 +5,14 @@ use super::get_mongo_client;
 use crate::model::Wishlist;
 use crate::persistence::{Error, Result, WishlistDao};
 
+#[derive(Clone)]
 pub struct MongoWishlistDao {
     client: Client,
 }
 
 impl MongoWishlistDao {
     pub fn new() -> Result<MongoWishlistDao> {
+        info!("Creating new mongodb wishlist dao");
         Ok(MongoWishlistDao {
             client: get_mongo_client()?,
         })

@@ -4,7 +4,10 @@ extern crate warp;
 extern crate log;
 extern crate bson;
 extern crate thiserror;
+#[macro_use]
+extern crate lazy_static;
 
+mod cache;
 mod controller;
 mod error;
 mod model;

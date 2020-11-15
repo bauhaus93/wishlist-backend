@@ -18,3 +18,4 @@ thiserror = "^1.0"
 cached = "^0.20"
 mongodb = { version = "^1.1", default_features = false, features = ["sync"] }
 bson = "^1.1"
+lazy_static = "^1.4"
