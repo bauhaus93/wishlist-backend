@@ -1,6 +1,6 @@
-use lru_time_cache::LruCache;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
+use ttl_cache::TtlCache;
 
 use crate::controller::{Error, Result, WishlistController};
 use crate::model::Wishlist;
@@ -8,7 +8,7 @@ use crate::service::{get_wishlist_service, WishlistService};
 
 pub struct SimpleWishlistController {
     wishlist_service: Arc<dyn WishlistService>,
-    cache: Arc<Mutex<LruCache<String, Wishlist>>>,
+    cache: Arc<Mutex<TtlCache<String, Wishlist>>>,
 }
 
 impl SimpleWishlistController {
@@ -16,9 +16,7 @@ impl SimpleWishlistController {
         Ok(Self {
             wishlist_service: get_wishlist_service()
                 .ok_or(Error::ServiceUninitialized("wishlist_service".to_string()))?,
-            cache: Arc::new(Mutex::new(LruCache::with_expiry_duration(
-                Duration::from_secs(60),
-            ))),
+            cache: Arc::new(Mutex::new(TtlCache::new(16))),
         })
     }
 }
@@ -36,7 +34,11 @@ impl WishlistController for SimpleWishlistController {
             None => {
                 debug!("Retrieving last wishlist from fallback");
                 let wishlist = self.wishlist_service.get_last_wishlist()?;
-                (*guard).insert("get-last-wishlist".to_string(), wishlist.clone());
+                (*guard).insert(
+                    "get-last-wishlist".to_string(),
+                    wishlist.clone(),
+                    Duration::from_secs(60),
+                );
                 Ok(wishlist)
             }
         }
