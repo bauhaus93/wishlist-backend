@@ -1,21 +1,24 @@
-use crate::persistence::{Error, ProductDao, Result, SourceDao, WishlistDao};
+use std::sync::Arc;
 
 use super::{MongoProductDao, MongoSourceDao, MongoWishlistDao};
+use crate::persistence::{ProductDao, SourceDao, WishlistDao};
 
 lazy_static! {
-    static ref PRODUCT_DAO: Option<MongoProductDao> = MongoProductDao::new().ok();
-    static ref WISHLIST_DAO: Option<MongoWishlistDao> = MongoWishlistDao::new().ok();
-    static ref SOURCE_DAO: Option<MongoSourceDao> = MongoSourceDao::new().ok();
+    static ref PRODUCT_DAO: Option<Arc<MongoProductDao>> =
+        MongoProductDao::new().map(Arc::new).ok();
+    static ref WISHLIST_DAO: Option<Arc<MongoWishlistDao>> =
+        MongoWishlistDao::new().map(Arc::new).ok();
+    static ref SOURCE_DAO: Option<Arc<MongoSourceDao>> = MongoSourceDao::new().map(Arc::new).ok();
 }
 
-pub fn get_product_dao() -> Option<Box<MongoProductDao>> {
-    PRODUCT_DAO.as_ref().map(|dao| Box::new(dao.clone()))
+pub fn get_product_dao() -> Option<Arc<MongoProductDao>> {
+    (*PRODUCT_DAO).clone()
 }
 
-pub fn get_wishlist_dao() -> Option<Box<MongoWishlistDao>> {
-    WISHLIST_DAO.as_ref().map(|dao| Box::new(dao.clone()))
+pub fn get_wishlist_dao() -> Option<Arc<MongoWishlistDao>> {
+    (*WISHLIST_DAO).clone()
 }
 
-pub fn get_source_dao() -> Option<Box<MongoSourceDao>> {
-    SOURCE_DAO.as_ref().map(|dao| Box::new(dao.clone()))
+pub fn get_source_dao() -> Option<Arc<MongoSourceDao>> {
+    (*SOURCE_DAO).clone()
 }

@@ -6,8 +6,8 @@ extern crate bson;
 extern crate thiserror;
 #[macro_use]
 extern crate lazy_static;
+extern crate lru_time_cache;
 
-mod cache;
 mod controller;
 mod error;
 mod model;
