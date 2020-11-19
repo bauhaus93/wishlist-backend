@@ -28,6 +28,7 @@ pub async fn create_routes() -> Result<impl warp::Filter<Extract = impl warp::Re
     let route_get_last_wishlist = warp::get()
         .and(warp::path("api"))
         .and(warp::path("wishlist"))
+        .and(warp::path("last"))
         .and(warp::path::end())
         .and(wishlist_controller_filter.clone())
         .and_then(reply_future!(WishlistController, get_last_wishlist));

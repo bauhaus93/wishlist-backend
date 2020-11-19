@@ -55,6 +55,7 @@ async fn main() {
 
     warp::serve(routes).run(socket_addr).await;
 }
+
 fn init_logger() {
     let format = |buf: &mut Formatter, record: &Record| {
         let time = chrono::Local::now();

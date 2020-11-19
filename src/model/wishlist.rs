@@ -40,15 +40,3 @@ impl From<&Document> for Wishlist {
         }
     }
 }
-
-/*
-products: doc.get_array("products").map(|bson| {
-               bson.iter()
-                   .filter_map(|e| {
-                       e.as_document()
-                           .ok_or(Self::Error::UnexpectedType)
-                           .and_then(Product::try_from)
-                           .map_or(None, Option::Some)
-                   })
-                   .collect()
-           })?,*/

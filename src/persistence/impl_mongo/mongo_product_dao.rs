@@ -43,7 +43,7 @@ impl ProductDao for MongoProductDao {
             })
     }
 
-    fn get_archived_products(&self, page: usize, per_page: usize) -> Result<Vec<Product>> {
+    fn get_archived_products(&self, _page: usize, _per_page: usize) -> Result<Vec<Product>> {
         let coll = self.client.database("wishlist").collection("product");
         Ok(Vec::new())
     }

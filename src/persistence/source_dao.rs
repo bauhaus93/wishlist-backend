@@ -1,6 +1,6 @@
 use mongodb::bson::oid::ObjectId;
 
-use super::{Error, Result};
+use super::Result;
 use crate::model::{Product, Source};
 
 pub trait SourceDao: Send + Sync {
